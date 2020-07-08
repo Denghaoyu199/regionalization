@@ -1,0 +1,84 @@
+%%%%The rules are extracted step by step, the stations after each extraction are not entered into the next rule extraction.
+%%%%"a" is the decision table, from left to right: elements1, element2, element3, element4, eco-geographical region (column 10), rule level (column 11, initial 0), rule number (column 12, Initially 0)
+b=1;
+%%%rule level 1
+for i=1:4 %%%The four elements are separate
+    for j=min(a(:,i)):max(a(:,i))
+        x=find(a(:,i)==j&a(:,11)==0);
+        c=a(x,:);
+        if max(c(:,10))==min(c(:,10))%%%If it is an inevitable decision
+            d(b,[i,10])=c(1,[i,10]);%%%Storage rules
+            d(b,11)=length(c(:,1));%%%Support of the rule
+            d(b,12)=1;%%rule level
+            a(x,11)=1;%%rule level
+            a(x,12)=b;%%rule number
+            b=b+1;%%rule number
+        end
+    end
+end
+clear i j x c
+%%%rule level 2
+e=combntns(1:4,2);%%%The four elements are combined in pairs
+for i=1:length(e(:,1))
+    e1=e(i,1);e2=e(i,2);
+    for j=min(a(:,e1)):max(a(:,e1))
+        for k=min(a(:,e2)):max(a(:,e2))
+            x=find(a(:,e1)==j&a(:,e2)==k&a(:,11)==0);
+            if (~isempty(x))==1
+                c=a(x,:);
+                if max(c(:,10))==min(c(:,10))
+                    d(b,[e1,e2,10])=c(1,[e1,e2,10]);
+                    d(b,11)=length(c(:,1));
+                    d(b,12)=2;a(x,11)=2;
+                    a(x,12)=b;
+                    b=b+1;
+                end
+            end
+        end
+    end
+end
+clear i j k x x1 x2 c e e1 e2
+%rule level 3
+e=combntns(1:4,3);%%%The four elements are three or three combinations
+for i=1:length(e(:,1))
+    e1=e(i,1);e2=e(i,2);e3=e(i,3);
+    for j=min(a(:,e1)):max(a(:,e1))
+        for k=min(a(:,e2)):max(a(:,e2))
+            for l=min(a(:,e3)):max(a(:,e3))
+            x=find(a(:,e1)==j&a(:,e2)==k&a(:,e3)==l&a(:,11)==0);
+            if (~isempty(x))==1
+                c=a(x,:);
+                if max(c(:,10))==min(c(:,10))
+                    d(b,[e1,e2,e3,10])=c(1,[e1,e2,e3,10]);
+                    d(b,11)=length(c(:,1));
+                    d(b,12)=3;a(x,11)=3;
+                    a(x,12)=b;
+                    b=b+1;
+                end
+            end
+            end
+        end
+    end
+end
+clear i j k l x x1 x2 c e e1 e2 e3
+%rule level 4
+for i=min(a(:,1)):max(a(:,1))
+        for j=min(a(:,2)):max(a(:,2))
+            for k=min(a(:,3)):max(a(:,3))
+                for l=min(a(:,4)):max(a(:,4))
+                    x=find(a(:,1)==i&a(:,2)==j&a(:,3)==k&a(:,4)==l&a(:,11)==0);%For the remaining stations;
+                    if (~isempty(x))==1
+                        c=a(x,:);
+                        if max(c(:,10))==min(c(:,10))
+                            d(b,[1,2,3,4,10])=c(1,[1,2,3,4,10]);
+                            d(b,11)=length(c(:,1));
+                            d(b,12)=4;a(x,11)=4;
+                            a(x,12)=b;
+                            b=b+1;
+                        end
+                    end
+                end
+            end
+        end
+end
+clear i j k l x x1 x2 c m
