@@ -1,0 +1,19 @@
+%%%%%%Apply rules to regionalization
+%%%%"a" is a grading table, from left to right are: element1, element2, element3, element4, 5 regions(initial is 0), 6 rule levels (initial is 0), 7 rule serial numbers (initial is 0)
+%%%%"b" is the rule table, from left to right are: elements1, element2, element3, element4, 5 regions, 6 rule level, 7 rule serial number
+for i=1:max(b(:,6))
+        x=find(b(:,6)==i);%Find all rules at level i
+        if (~isempty(x))==1 %if exist
+            c=b(x,:);%%Save the i-th rule to c
+            for j=1:length(c(:,1))
+                y=find(c(j,1:4)~=0);%%Find which columns are the conditions corresponding to the jth rule
+                z=find(a(:,6)==0);%Find grids that are not currently regionalized by previous rules
+                for k=1:length(y(1,:));%%number of conditions (elements)
+                    z1=find(a(:,y(1,k))==c(j,y(1,k)));%%%Find a grid that satisfies the kth condition of the jth rule at the ith level,
+                    z=intersect(z,z1);%%%Conditional rowset intersection
+                end
+                a(z,5)=c(j,5);a(z,6)=c(j,6);a(z,7)=c(j,7);%Give the corresponding partition and corresponding rule level and serial number
+            end
+        end
+end
+clear c i j k x y z z1
